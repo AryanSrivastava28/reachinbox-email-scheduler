@@ -1,7 +1,16 @@
 import dotenv from "dotenv";
 import path from "path";
+import fs from "fs";
 
-dotenv.config({ path: path.resolve(process.cwd(), "backend/.env") });
+// Resolve .env whether the process cwd is the project root or backend/
+const envCandidates = [
+  path.resolve(process.cwd(), "backend/.env"),
+  path.resolve(process.cwd(), ".env"),
+];
+const envPath = envCandidates.find((p) => fs.existsSync(p));
+if (envPath) {
+  dotenv.config({ path: envPath });
+}
 
 function required(key: string, fallback?: string): string {
   const value = process.env[key] ?? fallback;

@@ -15,6 +15,9 @@ const baseOptions: RedisOptions = {
  * maxRetriesPerRequest must be null for BullMQ.
  */
 export const redisConnection = new IORedis(baseOptions);
+redisConnection.on("error", (err) => {
+  console.error("[redis:bullmq] connection error:", err.message);
+});
 
 /**
  * Separate connection for express-session store so BullMQ's
@@ -23,6 +26,9 @@ export const redisConnection = new IORedis(baseOptions);
 export const sessionRedis = new IORedis({
   ...baseOptions,
   maxRetriesPerRequest: 3,
+});
+sessionRedis.on("error", (err) => {
+  console.error("[redis:session] connection error:", err.message);
 });
 
 export async function pingRedis(): Promise<void> {
